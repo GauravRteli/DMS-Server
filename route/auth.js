@@ -8,7 +8,6 @@ const CHAT_ID = process.env.CHAT_ID;
 // create a bot object ..
 const bot = new TelegramBot(TOKEN, {polling: true});
 
-
 // signing up the for the admin
 router.post('/signup',async (req,res) => {
 
