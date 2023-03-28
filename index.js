@@ -8,7 +8,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(require('./route/auth'));
 app.use(require('./route/recruitment'));
-
+app.use(require('./route/user'));
 app.listen(PORT, () => {
     console.log(`Listening at the Port : ${PORT}`)
 })
