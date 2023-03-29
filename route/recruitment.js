@@ -3,8 +3,17 @@ const router = express.Router();
 const RecruitmentSchema = require("../model/Recruitment.js");
 
 router.post("/add-recruitment", async (req, res) => {
-  const { jobName, noofworkers, requirements, description, limitedtime, date } =
-    req.body;
+  const {
+    jobName,
+    noofworkers,
+    requirements,
+    description,
+    limitedtime,
+    date,
+    workerAge,
+    shift,
+    sex,
+  } = req.body;
   console.log(req.body);
   const recruit = new RecruitmentSchema({
     jobname: jobName,
@@ -12,6 +21,9 @@ router.post("/add-recruitment", async (req, res) => {
     requirements: requirements,
     description: description,
     limitedtime: limitedtime,
+    workerAge: workerAge,
+    shift: shift,
+    sex: sex,
     date: limitedtime ? date : "",
     time: new Date(),
   });
@@ -29,8 +41,18 @@ router.get("/get-recruitments", async (req, res) => {
 });
 
 router.post("/update-recruitment", async (req, res) => {
-  const { jobname, date, description, limitedtime, noofworkers, requirements, id } =
-    req.body;
+  const {
+    jobname,
+    date,
+    description,
+    limitedtime,
+    noofworkers,
+    requirements,
+    id,
+    sex,
+    shift,
+    workerAge,
+  } = req.body;
   const recruitment = await RecruitmentSchema.findByIdAndUpdate(id, {
     $set: {
       jobname: jobname,
@@ -39,6 +61,9 @@ router.post("/update-recruitment", async (req, res) => {
       limitedtime: limitedtime,
       noofworkers: noofworkers,
       requirements: requirements,
+      sex:sex,
+      shift:shift,
+      workerAge:workerAge
     },
   });
   res.send(recruitment);
@@ -48,11 +73,9 @@ router.post("/delete-recruitment", async (req, res) => {
   const { id } = req.body;
   const deleted = await RecruitmentSchema.findByIdAndDelete(id);
   if (deleted)
-    res
-      .status(200)
-      .send({
-        message: `Deleted the Recruitment With Jobname => ${deleted.jobname}`,
-      });
+    res.status(200).send({
+      message: `Deleted the Recruitment With Jobname => ${deleted.jobname}`,
+    });
   else {
     res.status(401).send({ message: "Error Occured !" });
   }
