@@ -9,9 +9,11 @@ const RecruitmentSchema = new Schema(
     shift: { type: String, required: true },
     sex: { type: String, required: true },
     requirements: { type: String, required: true },
+    salary:{type: Number,required: true},
     description: { type: String, required: true },
     limitedtime: { type: Boolean, required: true },
     date: { type: String, required: false },
+    workerregistered:{type: Array, required: false, default: new Array() },
     time: { type: Date, required: true },
   },
   { timestamps: true }

@@ -7,6 +7,7 @@ const AppUserSchema = new Schema({
     phoneNo: {type: String,required: true},
     dateOfBirth: {type: String,required: true},
     skills:{type: Array,required: true},
+    appliedjob:{type: Array,required: false,default: new Array()},
     password: {type: String,required: true},
 },{ timestamps: true })
 

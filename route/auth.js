@@ -17,7 +17,6 @@ bot.onText(/\/start/,async (msg) => {
             admins: new Array()
         });
         const data = await newadmindata.save();
-        console.log(data);
     }
     let flag = false;
     admins.map(({admins}) => { // checking whether the user is already present or Not .....
@@ -41,7 +40,6 @@ bot.onText(/\/start/,async (msg) => {
 // signing up the for the admin
 router.post('/signup',async (req,res) => {
 
-    console.log(req.body);
     const {username, password, email} = req.body;
     const NewPassword = await bcrypt.hash(password, 10);
     const user = new UserSchema({

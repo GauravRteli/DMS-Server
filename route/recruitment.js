@@ -13,8 +13,8 @@ router.post("/add-recruitment", async (req, res) => {
     workerAge,
     shift,
     sex,
+    salary
   } = req.body;
-  console.log(req.body);
   const recruit = new RecruitmentSchema({
     jobname: jobName,
     noofworkers: noofworkers,
@@ -26,6 +26,7 @@ router.post("/add-recruitment", async (req, res) => {
     sex: sex,
     date: limitedtime ? date : "",
     time: new Date(),
+    salary: salary
   });
   const data = await recruit.save();
 
@@ -48,6 +49,7 @@ router.post("/update-recruitment", async (req, res) => {
     limitedtime,
     noofworkers,
     requirements,
+    salary,
     id,
     sex,
     shift,
@@ -63,7 +65,8 @@ router.post("/update-recruitment", async (req, res) => {
       requirements: requirements,
       sex:sex,
       shift:shift,
-      workerAge:workerAge
+      workerAge:workerAge,
+      salary: salary
     },
   });
   res.send(recruitment);
