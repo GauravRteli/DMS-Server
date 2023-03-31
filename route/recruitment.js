@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const RecruitmentSchema = require("../model/Recruitment.js");
+const AppUser = require("../model/AppUser.js")
 
 router.post("/add-recruitment", async (req, res) => {
   const {
@@ -83,5 +84,33 @@ router.post("/delete-recruitment", async (req, res) => {
     res.status(401).send({ message: "Error Occured !" });
   }
 });
+
+// get the particular job using the job_id
+
+router.post("/get-job",async(req,res) => {
+  const { job_id } = req.body;
+  const job = await RecruitmentSchema.findById(job_id);
+  if(job){
+    res.status(200).send(job);
+  }else{
+    res.status(201).send({message: "no job found !"});
+  }
+})
+
+
+// fake Requests ....... Cruicial .....  X X X X
+router.post("/fake",async(req,res) => {
+  const job = await RecruitmentSchema.findByIdAndUpdate("6425f3c6752c6e8bd2ea1b59",{
+    $set:{workerregistered: new Array()}
+  });
+  await AppUser.findByIdAndUpdate("6425f5b24d1f4dd3ade0069a",{
+    $set:{ appliedjob: new Array() }
+  })
+  await AppUser.findByIdAndUpdate("642748497e793717663ad0b5",{
+    $set:{ appliedjob: new Array() }
+  })
+    res.status(201).send({message: "no job found !"});
+})
+
 
 module.exports = router;
