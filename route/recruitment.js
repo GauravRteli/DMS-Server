@@ -107,6 +107,7 @@ router.post("/recruit-worker", async (req, res) => {
   const admin = await UserSchema.find({});
   try {
     // removing the worker from workerregistered
+
     let workerregistered = job.workerregistered;
     let new_workerregistered = new Array();
     workerregistered.map((worker) => {
@@ -145,16 +146,67 @@ router.post("/recruit-worker", async (req, res) => {
     });
 
     // adding job  to the worker
+    let appliedjobs = worker.appliedjob;
+    appliedjobs.map((appliedjob) => { 
+      if(appliedjob.job._id == job_id){
+        appliedjob.status = 1;
+      }
+    })
     await AppUser.findByIdAndUpdate(workerId, {
-      $set: { recruitedInJob: new_job_after_update },
+      $set: { recruitedInJob: new_job_after_update,appliedjob: appliedjobs },
     });
 
-    res.status(200).send({new_jobData: new_job_after_update})
+    res.status(200).send({new_jobData: new_job_after_update});
 
   } catch (e) {
     res.status(400).send({"message": "Error Occured"});
   }
 });
+
+// reject -- worker
+
+router.post("/reject-worker", async (req,res) => {
+
+  const { job_id, workerId } = req.body;
+  const worker = await AppUser.findById(workerId);
+  const job = await RecruitmentSchema.findById(job_id);
+
+  let workerregistered = job.workerregistered;
+  let new_workerregistered = new Array();
+  workerregistered.map((worker) => {
+    if (worker._id != workerId) {
+      new_workerregistered.push(worker);
+    }
+  });
+  const new_job = await RecruitmentSchema.findByIdAndUpdate(
+    job_id,
+    {
+      $set: { workerregistered: new_workerregistered },
+    },
+    {
+      new: true,
+    }
+  ); // returns the new worker after updating the workerregistered
+
+
+  // updating the status of the applied job to 2
+  let appliedjobs = worker.appliedjob;
+  appliedjobs.map((appliedjob) => { 
+    if(appliedjob.job._id == job_id){
+      appliedjob.status = 2;
+    }
+  });
+  
+  // updating the worker records.
+  await AppUser.findByIdAndUpdate(workerId, {
+    $set: { appliedjob: appliedjobs }
+  });
+
+  res.status(200).send({new_jobData: new_job});
+
+})
+
+
 
 // fake Requests ....... Cruicial .....  X X X X
 router.post("/fake", async (req, res) => {

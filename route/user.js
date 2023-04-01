@@ -67,7 +67,10 @@ router.post("/user-jobapplication", async (req, res) => {
   const appliedUser = await AppUserSchema.findById(user._id);
   let jobapplications = appliedUser.appliedjob; // job in which the user has applied .....
 
-  jobapplications.push(job);
+  jobapplications.push({
+    job: job,
+    status: 0
+  });
   userapplications.push(user);
 
   await RecruitmentSchema.findByIdAndUpdate(job_id, {
