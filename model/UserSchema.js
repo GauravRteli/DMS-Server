@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
     username: { type: String, required: true},
     password: { type: String, required: true },
-    email: {type: String,required: true}
+    email: {type: String,required: true},
+    recruitedWorkers: {type: Array,required: false,default: new Array()} // all recruited person will be stored over here
 }, { timestamps: true });
 
 module.exports = mongoose.model('Userinfo', UserSchema);

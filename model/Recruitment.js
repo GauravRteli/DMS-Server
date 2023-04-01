@@ -13,7 +13,8 @@ const RecruitmentSchema = new Schema(
     description: { type: String, required: true },
     limitedtime: { type: Boolean, required: true },
     date: { type: String, required: false },
-    workerregistered:{type: Array, required: false, default: new Array() },
+    workerregistered:{type: Array, required: false, default: new Array()},
+    recruitedWorkers: {type: Array,required: false,default: new Array()},
     time: { type: Date, required: true },
   },
   { timestamps: true }

@@ -8,6 +8,7 @@ const AppUserSchema = new Schema({
     dateOfBirth: {type: String,required: true},
     skills:{type: Array,required: true},
     appliedjob:{type: Array,required: false,default: new Array()},
+    recruitedInJob: {type: Object, required: false,default: null}, // job in which the user is working .
     password: {type: String,required: true},
 },{ timestamps: true })
 

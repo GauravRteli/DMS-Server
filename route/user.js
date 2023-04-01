@@ -58,7 +58,6 @@ router.get("/get-jobs", async (req, res) => {
 });
 
 // registration in job
-
 router.post("/user-jobapplication", async (req, res) => {
 
   const { user, job_id } = req.body;

@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const RecruitmentSchema = require("../model/Recruitment.js");
-const AppUser = require("../model/AppUser.js")
+const AppUser = require("../model/AppUser.js");
+const UserSchema = require("../model/UserSchema.js");
 
 router.post("/add-recruitment", async (req, res) => {
   const {
@@ -14,7 +15,7 @@ router.post("/add-recruitment", async (req, res) => {
     workerAge,
     shift,
     sex,
-    salary
+    salary,
   } = req.body;
   const recruit = new RecruitmentSchema({
     jobname: jobName,
@@ -27,7 +28,7 @@ router.post("/add-recruitment", async (req, res) => {
     sex: sex,
     date: limitedtime ? date : "",
     time: new Date(),
-    salary: salary
+    salary: salary,
   });
   const data = await recruit.save();
 
@@ -64,10 +65,10 @@ router.post("/update-recruitment", async (req, res) => {
       limitedtime: limitedtime,
       noofworkers: noofworkers,
       requirements: requirements,
-      sex:sex,
-      shift:shift,
-      workerAge:workerAge,
-      salary: salary
+      sex: sex,
+      shift: shift,
+      workerAge: workerAge,
+      salary: salary,
     },
   });
   res.send(recruitment);
@@ -87,30 +88,92 @@ router.post("/delete-recruitment", async (req, res) => {
 
 // get the particular job using the job_id
 
-router.post("/get-job",async(req,res) => {
+router.post("/get-job", async (req, res) => {
   const { job_id } = req.body;
   const job = await RecruitmentSchema.findById(job_id);
-  if(job){
+  if (job) {
     res.status(200).send(job);
-  }else{
-    res.status(201).send({message: "no job found !"});
+  } else {
+    res.status(201).send({ message: "no job found !" });
   }
-})
+});
 
+// recruit -- worker
+
+router.post("/recruit-worker", async (req, res) => {
+  const { job_id, workerId } = req.body;
+  const job = await RecruitmentSchema.findById(job_id);
+  const worker = await AppUser.findById(workerId);
+  const admin = await UserSchema.find({});
+  try {
+    // removing the worker from workerregistered
+    let workerregistered = job.workerregistered;
+    let new_workerregistered = new Array();
+    workerregistered.map((worker) => {
+      if (worker._id != workerId) {
+        new_workerregistered.push(worker);
+      }
+    });
+    const new_job = await RecruitmentSchema.findByIdAndUpdate(
+      job_id,
+      {
+        $set: { workerregistered: new_workerregistered },
+      },
+      {
+        new: true,
+      }
+    ); // returns the new worker after updating the workerregistered
+
+    // adding worker into the job
+    let job_worker = new_job.recruitedWorkers;
+    job_worker.push(worker);
+    const new_job_after_update = await RecruitmentSchema.findByIdAndUpdate(
+      job_id,
+      {
+        $set: { recruitedWorkers: job_worker },
+      },
+      {
+        new: true,
+      }
+    );
+
+    // adding worker to the  admin
+    let admin_worker = admin[0].recruitedWorkers;
+    admin_worker.push(worker);
+    await UserSchema.findByIdAndUpdate(admin[0]._id, {
+      $set: { recruitedWorkers: admin_worker },
+    });
+
+    // adding job  to the worker
+    await AppUser.findByIdAndUpdate(workerId, {
+      $set: { recruitedInJob: new_job_after_update },
+    });
+
+    res.status(200).send({new_jobData: new_job_after_update})
+
+  } catch (e) {
+    res.status(400).send({"message": "Error Occured"});
+  }
+});
 
 // fake Requests ....... Cruicial .....  X X X X
-router.post("/fake",async(req,res) => {
-  const job = await RecruitmentSchema.findByIdAndUpdate("6425f3c6752c6e8bd2ea1b59",{
-    $set:{workerregistered: new Array()}
+router.post("/fake", async (req, res) => {
+  const job = await RecruitmentSchema.updateMany(
+    {},
+    {
+      $set: { workerregistered: new Array() },
+    }
+  );
+  await AppUser.updateMany({}, {
+    $set: { appliedjob: new Array() },
   });
-  await AppUser.findByIdAndUpdate("6425f5b24d1f4dd3ade0069a",{
-    $set:{ appliedjob: new Array() }
+  res.status(201).send({ message: "no job found !" });
+});
+router.post("/fake1", async(req,res) => {
+  await AppUser.updateMany({},{
+    $set: { recruitedInJob: null }
   })
-  await AppUser.findByIdAndUpdate("642748497e793717663ad0b5",{
-    $set:{ appliedjob: new Array() }
-  })
-    res.status(201).send({message: "no job found !"});
+  res.send("gaurav");
 })
-
 
 module.exports = router;
