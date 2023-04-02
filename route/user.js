@@ -7,7 +7,7 @@ const RecruitmentSchema = require("../model/Recruitment.js");
 const AppUserSchema = require("../model/AppUser");
 
 router.post("/appuserregistration", async (req, res) => {
-  const { name, email, phoneNo, dateOfBirth, skills, password } = req.body;
+  const { name, sex,email, phoneNo, dateOfBirth, skills, password } = req.body;
   const user1 = await AppUserSchema.findOne({ email: email });
 
   if (user1) {
@@ -16,6 +16,7 @@ router.post("/appuserregistration", async (req, res) => {
     const NewPassword = await bcrypt.hash(password, 10);
     const user = new AppUserSchema({
       name,
+      sex,
       email,
       phoneNo,
       dateOfBirth,

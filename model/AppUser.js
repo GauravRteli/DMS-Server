@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const AppUserSchema = new Schema({
     name: {type: String,required: true},
+    sex:{type: String,required:true},
     email: {type: String,required: true},
     phoneNo: {type: String,required: true},
     dateOfBirth: {type: String,required: true},
